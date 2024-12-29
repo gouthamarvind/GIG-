@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gig Worker Payment</title>
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Container */
+    .container {
+      max-width: 600px;
+      width: 90%;
+      background: linear-gradient(145deg, #25a55f, #1e8a4e);
+      color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Logo */
+    .logo {
+      margin-bottom: 20px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .logo img {
+      max-width: 200px;
+      border-radius: 20%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Details Pane */
+    .details-pane {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Buttons */
+    button {
+      display: block;
+      width: 100%;
+      padding: 30px 40px;
+      margin: 10px 0;
+      background-color: white;
+      color: #25a55f;
+      border: none;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button:hover {
+      background-color: #25a55f;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    /* Output Fields */
+    .output {
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 14px;
+      color: white;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .output:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    footer a {
+      color: #ffdd57;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #ffe67d;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Logo Section -->
+    <div class="logo">
+      <img src="C:\Users\LENOVO\Desktop\207135203.png">
+    </div>
+
+    <!-- Details Pane -->
+    <div class="details-pane">
+      <h2>Gig Worker Payment</h2>
+      <button id="connectWallet">Connect Wallet</button>
+      <div id="walletAddress" class="output">Wallet Address: Not connected</div>
+      <button id="getBalance">Get Contract Balance</button>
+      <div id="contractBalance" class="output">Contract Balance: </div>
+      <button id="sendPayment">Send Payment</button>
+      <div id="status" class="output">Status: </div>
+    </div>
+
+    
+  </div>
+
+  <script>
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider.default,
+        options: {
+          infuraId: "YOUR_INFURA_ID" // Replace with your Infura Project ID
+        }
+      }
+    };
+
+    let provider;
+    let signer;
+    let contract;
+
+    const contractAddress = "0xAe3489cb7eD3a921B04dcF227B953C46f50dd393";
+    const abi = [ /* Copy your ABI here */ ];
+
+    async function connectWallet() {
+      try {
+        const walletConnectProvider = new WalletConnectProvider.default(providerOptions.walletconnect.options);
+        await walletConnectProvider.enable();
+        provider = new ethers.providers.Web3Provider(walletConnectProvider);
+        signer = provider.getSigner();
+        const walletAddress = await signer.getAddress();
+        document.getElementById("walletAddress").innerText = `Wallet Address: ${walletAddress}`;
+        contract = new ethers.Contract(contractAddress, abi, signer);
+        console.log("Wallet connected:", walletAddress);
+      } catch (error) {
+        console.error("Error connecting wallet:", error);
+      }
+    }
+
+    async function getContractBalance() {
+      try {
+        const balance = await contract.getContractBalance();
+        document.getElementById("contractBalance").innerText = `Contract Balance: ${ethers.utils.formatEther(balance)} ETH`;
+      } catch (error) {
+        console.error("Error fetching contract balance:", error);
+      }
+    }
+
+    async function sendPayment() {
+      try {
+        const tx = await contract.sendPayment();
+        await tx.wait();
+        document.getElementById("status").innerText = "Status: Payment Sent!";
+      } catch (error) {
+        console.error("Error sending payment:", error);
+        document.getElementById("status").innerText = `Status: ${error.message}`;
+      }
+    }
+
+    document.getElementById("connectWallet").addEventListener("click", connectWallet);
+    document.getElementById("getBalance").addEventListener("click", getContractBalance);
+    document.getElementById("sendPayment").addEventListener("click", sendPayment);
+  </script>
+</body>
+</html>

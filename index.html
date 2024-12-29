@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gig Connects</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+        }
+        .left-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #25a55f; /* Placeholder green */
+            color: white;
+        }
+        .right-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            color: #25a55f; /* Match with the left-section */
+        }
+        .right-section button {
+            background-color: #25a55f;
+            color: white;
+            border: none;
+            padding: 30px 45px;
+            margin: 20px;
+            cursor: pointer;
+            font-size: 20px;
+            border-radius: 10px;
+        }
+        .right-section button:hover {
+            background-color: #25a55f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-section" id="left-section">
+            <img srC:\Usersc="\LENOVO\Desktop\207135203.png" alt="Company Logo" style="max-width: 600px; max-height: 600px;">
+        </div>
+        <div class="right-section">
+            <button onclick="becomeWorker()">Become a Worker</button>
+            <button onclick="bookService()">Book a Service</button>
+        </div>
+    </div>
+
+    <script>
+        function uploadLogo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.style.maxWidth = "300px";
+                    img.style.maxHeight = "300px";
+                    document.getElementById('left-section').appendChild(img);
+
+                    // Extract dominant color (Placeholder: Use green for now)
+                    const baseColor = "#25a55f"; // Replace with dynamic color detection if needed
+                    document.getElementById('left-section').style.backgroundColor = baseColor;
+                    document.querySelector('.right-section').style.color = baseColor;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function becomeWorker() {
+            alert('Redirecting to Become a Worker page...');
+            // Implement navigation logic here
+        }
+
+        function bookService() {
+            alert('Redirecting to Book a Service page...');
+            // Implement navigation logic here
+        }
+    </script>
+</body>
+</html>
